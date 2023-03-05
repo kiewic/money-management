@@ -1,0 +1,6 @@
+<ng-container>
+  <select [(ngModel)]="selectedValue" (ngModelChange)="onSelectChange($event)">
+    <option value="keep">Keep</option>
+    <option value="ignore">Ignore</option>
+  </select>
+</ng-container>
