@@ -7,10 +7,12 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HeaderSelectComponent } from './header-select/header-select.component';
 import { ActionSelectComponent } from './action-select/action-select.component';
+import { TransactionTableComponent } from './transaction-table/transaction-table.component';
 
 @NgModule({
   declarations: [
     AppComponent,
+    TransactionTableComponent,
     ActionSelectComponent,
     HeaderSelectComponent
   ],

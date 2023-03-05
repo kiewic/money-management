@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { FileUploadService } from './file-upload.service';
 import { FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { TransactionTableComponent } from './transaction-table/transaction-table.component';
 
 const dummyInput = `Transaction Date,Post Date,Description,Category,Type,Amount,Memo
 12/04/2021,12/05/2021,AMZN Mktp US*CH55AQ4M3,Shopping,Sale,-12.01,
@@ -22,8 +23,7 @@ enum ColumnType {
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
-  items: string[][] = [];
+export class AppComponent implements AfterViewInit {
   categories: string[] = [
     'bills and services',
     'car (gas and parking)',
@@ -34,9 +34,10 @@ export class AppComponent {
     'tennis',
     'travel',
   ];
-  categoryOptions: string[] = [];
-  columnCount = 0;
   textAreaControl = new FormControl('');
+
+  @ViewChild(TransactionTableComponent)
+  private transactionTable?: TransactionTableComponent;
 
   constructor(_fileUploadService: FileUploadService) {
     // subscribe to the valueChanges observable of textAreaControl
@@ -49,10 +50,14 @@ export class AppComponent {
       distinctUntilChanged()
     ).subscribe(value => {
       // assign result to a variable named options
-      this.categoryOptions = value;
+      this.transactionTable!.categoryOptions = value;
     });
+  }
 
-    this.parseFile(dummyInput);
+  ngAfterViewInit() {
+    // Tick to avoid a ExpressionChangedAfterItHasBeenCheckedError
+    // since the current change detection cycle is complete
+    setTimeout(() => this.parseFile(dummyInput));
   }
 
   handleFileInput(event: Event) {
@@ -63,17 +68,16 @@ export class AppComponent {
     }
     const fileToUpload = files.item(0);;
     fileToUpload?.text().then(
-      (text: string) => console.log(text),
+      (text: string) => this.parseFile(text),
       (error: any) => console.error(error)
     );
   }
 
-  private parseFile(fileContent: string) {
-    const rows = fileContent.split('\n');
-    for (const row of rows) {
-      const columns = row.split(',');
-      this.columnCount = Math.max(columns.length, this.columnCount);
-      this.items.push(columns);
+  parseFile(text: string) {
+    if (this.transactionTable === undefined) {
+      throw new TypeError('transactionTable');
     }
+
+    this.transactionTable.parseFile(text);
   }
 }
