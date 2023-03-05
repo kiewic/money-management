@@ -226,12 +226,16 @@
 
   <!-- Step 2 -->
   <h1>Step 2: Organize entries</h1>
-  <div>
-    <select *ngFor="let _ of [].constructor(columnCount)"><option>Ignore</option></select>
-  </div>
-  <div *ngFor="let item of items">
-      <input *ngFor="let col of item" type="text" value="{{col}}">
-      <a href="">Delete</a>
+  <div style="display: grid; grid-auto-columns: 90px; grid-auto-rows: auto;">
+    <select *ngFor="let _ of [].constructor(columnCount); index as i" [style]="'grid-column-start: ' + (i + 1)">
+      <option>Keep</option>
+      <option>Ignore</option>
+    </select>
+    <div [style]="'grid-column-start:' + (columnCount + 1)">Delete</div>
+    <ng-container *ngFor="let item of items">
+        <input *ngFor="let col of item; index as i" type="text" value="{{col}}" [style]="'grid-column-start: ' + (i + 1)" readonly>
+        <a href="" [style]="'grid-column-start: ' + (columnCount + 1)">Delete</a>
+    </ng-container>
   </div>
 
 </div>
