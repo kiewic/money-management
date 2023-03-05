@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { FileUploadService } from './file-upload.service';
+import { FormControl } from '@angular/forms';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
 const dummyInput = `Transaction Date,Post Date,Description,Category,Type,Amount,Memo
 12/04/2021,12/05/2021,AMZN Mktp US*CH55AQ4M3,Shopping,Sale,-12.01,
@@ -32,9 +34,24 @@ export class AppComponent {
     'tennis',
     'travel',
   ];
+  categoryOptions: string[] = [];
   columnCount = 0;
+  textAreaControl = new FormControl('');
 
-  constructor(fileUploadService: FileUploadService) {
+  constructor(_fileUploadService: FileUploadService) {
+    // subscribe to the valueChanges observable of textAreaControl
+    this.textAreaControl.valueChanges.pipe(
+      // use debounceTime operator to delay emitting values by 1 second
+      debounceTime(1000),
+      // use map operator to split value by newline characters and filter out any empty strings
+      map(value => (value || '').split('\n').filter(line => line.trim() !== '')),
+      // use distinctUntilChanged operator to ignore duplicate values
+      distinctUntilChanged()
+    ).subscribe(value => {
+      // assign result to a variable named options
+      this.categoryOptions = value;
+    });
+
     this.parseFile(dummyInput);
   }
 
