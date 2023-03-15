@@ -49,13 +49,13 @@ export class AppComponent implements AfterViewInit, OnInit {
 
   ngOnInit(): void {
     const categories: string[] = [
-      'bills and services',
-      'car (gas and parking)',
-      'groceries',
-      'other',
-      'restaurants',
-      'tennis',
-      'travel',
+      'Bills and services',
+      'Car (gas and parking)',
+      'Groceries',
+      'Restaurants',
+      'Tennis',
+      'Travel',
+      'Other',
     ];
     this.textAreaControl.setValue(categories.join('\n'));
   }

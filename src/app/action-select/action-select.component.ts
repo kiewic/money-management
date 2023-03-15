@@ -15,8 +15,8 @@ export class ActionSelectComponent implements OnChanges {
       this.options = changes['options'].currentValue;
     }
 
-    if (!this.options.includes('Default')) {
-      this.options.unshift('Default');
+    if (!this.options.includes('Other')) {
+      this.options.unshift('Other');
     }
 
     if (!this.options.includes('Ignore')) {

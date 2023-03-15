@@ -14,8 +14,12 @@ Run `ng generate component component-name` to generate a new component. You can 
 
 ## Command history
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
-
 Some commands used during development were:
 
     ng generate component header-select
+
+## TODO
+
+1. Auto-detect the *Amount* column
+2. Auto-detect *Ignore* rows (non-of its values are number)
+3. Hide *Ignore* columns
