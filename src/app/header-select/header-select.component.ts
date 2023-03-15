@@ -6,7 +6,7 @@ import { Component } from '@angular/core';
   styleUrls: ['./header-select.component.css']
 })
 export class HeaderSelectComponent {
-  public selectedValue: string = 'keep';
+  public selectedValue: string = 'Keep';
 
   onSelectChange(newValue: string) {
     // TODO

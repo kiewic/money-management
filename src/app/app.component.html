@@ -233,6 +233,13 @@
   <div>
     <textarea rows="16" cols="40" [formControl]="textAreaControl"></textarea>
   </div>
+
+  <!-- Step 4 -->
+  <h1>Step 4: Export</h1>
+  <button (click)="handleClick()">Export</button>
+  <div style="width: 90%;">
+    <textarea #outputText rows="15" style="width: 100%;"></textarea>
+  </div>
 </div>
 
 <svg id="clouds" xmlns="http://www.w3.org/2000/svg" width="2611.084" height="485.677" viewBox="0 0 2611.084 485.677">

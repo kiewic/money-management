@@ -15,12 +15,12 @@ export class ActionSelectComponent implements OnChanges {
       this.options = changes['options'].currentValue;
     }
 
-    if (!this.options.includes('Skip')) {
-      this.options.unshift('Skip');
+    if (!this.options.includes('Default')) {
+      this.options.unshift('Default');
     }
 
-    if (!this.options.includes('Delete')) {
-      this.options.push('Delete');
+    if (!this.options.includes('Ignore')) {
+      this.options.push('Ignore');
     }
 
     if (!this.options.includes(this.selectedValue)) {

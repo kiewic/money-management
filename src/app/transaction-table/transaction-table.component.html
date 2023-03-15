@@ -4,7 +4,7 @@
   </app-header-select>
   <div [style]="'grid-column-start:' + (columnCount + 1)">Action</div>
   <ng-container *ngFor="let item of items">
-    <input *ngFor="let col of item; index as i" type="text" value="{{col}}" [style]="'grid-column-start: ' + (i + 1)"
+    <input #myInput *ngFor="let col of item; index as i" type="text" value="{{col}}" [style]="'grid-column-start: ' + (i + 1)"
       readonly>
     <app-action-select [options]="categoryOptions" [style]="'grid-column-start: ' + (columnCount + 1)">
     </app-action-select>

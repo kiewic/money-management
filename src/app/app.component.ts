@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FileUploadService } from './file-upload.service';
 import { FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
@@ -23,21 +23,14 @@ enum ColumnType {
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements AfterViewInit {
-  categories: string[] = [
-    'bills and services',
-    'car (gas and parking)',
-    'deleted',
-    'groceries',
-    'other',
-    'restaurants',
-    'tennis',
-    'travel',
-  ];
+export class AppComponent implements AfterViewInit, OnInit {
   textAreaControl = new FormControl('');
 
   @ViewChild(TransactionTableComponent)
   private transactionTable?: TransactionTableComponent;
+
+  @ViewChild('outputText')
+  private outputTextRef?: ElementRef;
 
   constructor(_fileUploadService: FileUploadService) {
     // subscribe to the valueChanges observable of textAreaControl
@@ -54,10 +47,27 @@ export class AppComponent implements AfterViewInit {
     });
   }
 
+  ngOnInit(): void {
+    const categories: string[] = [
+      'bills and services',
+      'car (gas and parking)',
+      'groceries',
+      'other',
+      'restaurants',
+      'tennis',
+      'travel',
+    ];
+    this.textAreaControl.setValue(categories.join('\n'));
+  }
+
   ngAfterViewInit() {
     // Tick to avoid a ExpressionChangedAfterItHasBeenCheckedError
     // since the current change detection cycle is complete
     setTimeout(() => this.parseFile(dummyInput));
+  }
+
+  public handleClick() {
+    this.outputTextRef!.nativeElement.value = this.transactionTable!.getOutput();
   }
 
   handleFileInput(event: Event) {
