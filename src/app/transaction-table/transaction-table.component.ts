@@ -31,11 +31,24 @@ export class TransactionTableComponent {
     const rows = fileContent.split('\n');
     this.items = [];
     for (const row of rows) {
+      if (row.trim().length === 0) {
+        continue;
+      }
       const columns = row.split(',');
+      for (let i = 0; i < columns.length; i++) {
+        columns[i] = this.removeQuotes(columns[i]);
+      }
       maxColumnCount = Math.max(columns.length, maxColumnCount);
       this.items.push(columns);
     }
     this.columnCount = maxColumnCount;
+  }
+
+  public removeQuotes(str: string): string {
+    if (str.length > 1 && str[0] === '"' && str[str.length - 1] === '"') {
+      return str.slice(1, -1);
+    }
+    return str;
   }
 
   public getOutput(): string {
