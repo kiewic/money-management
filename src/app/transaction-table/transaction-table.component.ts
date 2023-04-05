@@ -1,6 +1,7 @@
 import { Component, ElementRef, QueryList, ViewChildren } from '@angular/core';
 import { ActionSelectComponent } from '../action-select/action-select.component';
 import { HeaderSelectComponent } from '../header-select/header-select.component';
+import Decimal from '../../assets/decimal';
 
 interface OutputRow {
   actionSelection: string;
@@ -16,7 +17,7 @@ export class TransactionTableComponent {
   public categoryOptions: string[] = [];
   columnCount = 0;
   items: string[][] = [];
-  calculations: { total: number; categories: { [key: string]: number; }; };
+  calculations: { total: Decimal; categories: { [key: string]: Decimal; }; };
 
   @ViewChildren(HeaderSelectComponent) headerSelects!: QueryList<HeaderSelectComponent>;
   @ViewChildren(ActionSelectComponent) actionSelects!: QueryList<ActionSelectComponent>;
@@ -119,7 +120,7 @@ export class TransactionTableComponent {
 
   private initializeCalculations() {
     return {
-      total: 0,
+      total: new Decimal(0),
       categories: {},
     };
   }
@@ -127,14 +128,14 @@ export class TransactionTableComponent {
   private addAmount(columnValue: string, actionSelection: string) {
     const calculations = this.calculations;
 
-    const amount = Math.trunc(Number(columnValue) * 100);
-    calculations.total += amount;
+    const amount = new Decimal(columnValue);
+    calculations.total = calculations.total.plus(amount);
 
     const categories = calculations.categories;
     if (categories[actionSelection] === undefined) {
-      categories[actionSelection] = 0;
+      categories[actionSelection] = new Decimal(0);
     }
-    categories[actionSelection] += amount;
+    categories[actionSelection] = categories[actionSelection].plus(amount);
   }
 
   private stringifyTransactions(rows: OutputRow[]): string[] {
@@ -165,7 +166,7 @@ export class TransactionTableComponent {
   private stringifyCategoryAmounts(): string[] {
     const calculations = this.calculations;
     const rows: string[] = [];
-    rows.push(`total,${calculations.total / 100}`);
+    rows.push(`total,${calculations.total.toString()}`);
     for (const category in calculations.categories) {
       rows.push(this.stringifySingleAmount(category, 2));
     }
@@ -176,7 +177,7 @@ export class TransactionTableComponent {
     const output: string[] = new Array(Math.max(0, outputColumnCount - 2));
     const calculations = this.calculations;
     output.push(actionSelection);
-    output.push(String(calculations.categories[actionSelection] / 100));
+    output.push(calculations.categories[actionSelection].toString());
     return output.join(',');
   }
 }
