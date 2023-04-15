@@ -1,0 +1,13 @@
+:host {
+    display: grid;
+    grid-auto-rows: auto;
+    column-gap: 2px;
+    row-gap: 2px;
+
+    /* Column width */
+    grid-auto-columns: 1fr;
+}
+
+input {
+    width: 1fr;
+}
