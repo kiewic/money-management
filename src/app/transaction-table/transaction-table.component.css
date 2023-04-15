@@ -8,6 +8,11 @@
     grid-auto-columns: 1fr;
 }
 
-input {
+div {
     width: 1fr;
+}
+
+input {
+    width: calc(100% - 8px);
+    margin: 0px;
 }
