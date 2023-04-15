@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-header-select',
@@ -7,6 +7,10 @@ import { Component } from '@angular/core';
 })
 export class HeaderSelectComponent {
   public selectedValue: string = 'Keep';
+
+  @Input() set isAmount(value: boolean) {
+    this.selectedValue = value ? 'Amount' : 'Keep';
+  }
 
   onSelectChange(newValue: string) {
     // TODO

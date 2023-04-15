@@ -20,6 +20,5 @@ Some commands used during development were:
 
 ## TODO
 
-1. Auto-detect the *Amount* column
-2. Auto-detect *Ignore* rows (non-of its values are number)
+1. Validate the first row (headers how) contains only string values
 3. Hide *Ignore* columns

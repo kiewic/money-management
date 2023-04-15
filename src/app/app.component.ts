@@ -67,6 +67,7 @@ export class AppComponent implements AfterViewInit, OnInit {
   }
 
   public handleClick() {
+    this.outputTextRef!.nativeElement.value = ''; // Clear first, in case getOutput() fails
     this.outputTextRef!.nativeElement.value = this.transactionTable!.getOutput();
   }
 

@@ -9,22 +9,30 @@ export class ActionSelectComponent implements OnChanges {
   public selectedValue: string = 'delete';
   @Input() options: string[] = [];
 
+  @Input() set isHeaderRow(value: boolean) {
+    if (value) {
+      this.selectedValue = 'Ignore';
+    }
+  }
+
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['options'] && changes['options'].currentValue) {
+    if (changes['options'] && changes['options'].currentValue !== changes['options'].previousValue) {
+      let options = changes['options'].currentValue;;
+
+      if (!options.includes('Other')) {
+        options.unshift('Other');
+      }
+
+      if (!options.includes('Ignore')) {
+        options.push('Ignore');
+      }
+
       // Update the component state with the new options
-      this.options = changes['options'].currentValue;
-    }
+      this.options = options;
 
-    if (!this.options.includes('Other')) {
-      this.options.unshift('Other');
-    }
-
-    if (!this.options.includes('Ignore')) {
-      this.options.push('Ignore');
-    }
-
-    if (!this.options.includes(this.selectedValue)) {
-      this.selectedValue = this.options[0];
+      if (!options.includes(this.selectedValue)) {
+        this.selectedValue = options[0];
+      }
     }
   }
 

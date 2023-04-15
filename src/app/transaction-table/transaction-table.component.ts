@@ -16,6 +16,7 @@ interface OutputRow {
 export class TransactionTableComponent {
   public categoryOptions: string[] = [];
   columnCount = 0;
+  amountColumnIndex = -1;
   items: string[][] = [];
   calculations: { total: Decimal; categories: { [key: string]: Decimal; }; };
 
@@ -43,9 +44,18 @@ export class TransactionTableComponent {
       this.items.push(columns);
     }
     this.columnCount = maxColumnCount;
+    this.autoCalculateHeaders();
   }
 
-  public removeQuotes(str: string): string {
+  /** This code assumer there is a header row that contains the value `Amount` */
+  private autoCalculateHeaders() {
+    this.amountColumnIndex = -1;
+    if (this.items.length >= 1) {
+      this.amountColumnIndex = this.items[0].findIndex(x => x === 'Amount');
+    }
+  }
+
+  private removeQuotes(str: string): string {
     if (str.length > 1 && str[0] === '"' && str[str.length - 1] === '"') {
       return str.slice(1, -1);
     }

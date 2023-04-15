@@ -1,12 +1,14 @@
 <app-header-select *ngFor="let _ of [].constructor(columnCount); index as i"
+  [isAmount]="i === amountColumnIndex"
   [style]="'grid-column-start: ' + (i + 1) + '; grid-column-end: ' + (i + 2)">
 </app-header-select>
 <div [style]="'grid-column-start:' + (columnCount + 1) + '; grid-column-end: ' + (columnCount + 2)">Action</div>
-<ng-container *ngFor="let item of items">
+<ng-container *ngFor="let item of items; index as i">
   <div *ngFor="let col of item; index as i" 
     [style]="'grid-column-start: ' + (i + 1) + '; grid-column-end: ' + (i + 2)">
     <input #myInput type="text" value="{{col}}" readonly>
   </div>
-  <app-action-select [options]="categoryOptions" [style]="'grid-column-start: ' + (columnCount + 1) + '; grid-column-end: ' + (columnCount + 2)">
+  <app-action-select [options]="categoryOptions" [isHeaderRow]="i === 0"
+    [style]="'grid-column-start: ' + (columnCount + 1) + '; grid-column-end: ' + (columnCount + 2)">
   </app-action-select>
 </ng-container>
