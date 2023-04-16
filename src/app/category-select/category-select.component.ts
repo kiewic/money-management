@@ -1,11 +1,11 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 
 @Component({
-  selector: 'app-action-select',
-  templateUrl: './action-select.component.html',
-  styleUrls: ['./action-select.component.css']
+  selector: 'app-category-select',
+  templateUrl: './category-select.component.html',
+  styleUrls: ['./category-select.component.css']
 })
-export class ActionSelectComponent implements OnChanges {
+export class CategorySelectComponent implements OnChanges {
   public selectedValue: string = 'delete';
   @Input() options: string[] = [];
 

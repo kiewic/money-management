@@ -8,7 +8,7 @@
     [style]="'grid-column-start: ' + (i + 1) + '; grid-column-end: ' + (i + 2)">
     <input #myInput type="text" value="{{col}}" readonly>
   </div>
-  <app-action-select [options]="categoryOptions" [isHeaderRow]="i === 0"
+  <app-category-select [options]="categoryOptions" [isHeaderRow]="i === 0"
     [style]="'grid-column-start: ' + (columnCount + 1) + '; grid-column-end: ' + (columnCount + 2)">
-  </app-action-select>
+  </app-category-select>
 </ng-container>

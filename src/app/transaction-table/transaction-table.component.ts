@@ -1,10 +1,10 @@
 import { Component, ElementRef, QueryList, ViewChildren } from '@angular/core';
-import { ActionSelectComponent } from '../action-select/action-select.component';
+import { CategorySelectComponent } from '../category-select/category-select.component';
 import { HeaderSelectComponent } from '../header-select/header-select.component';
 import Decimal from '../../assets/decimal';
 
 interface OutputRow {
-  actionSelection: string;
+  categorySelection: string;
   values: string[];
 };
 
@@ -21,7 +21,7 @@ export class TransactionTableComponent {
   calculations: { total: Decimal; categories: { [key: string]: Decimal; }; };
 
   @ViewChildren(HeaderSelectComponent) headerSelects!: QueryList<HeaderSelectComponent>;
-  @ViewChildren(ActionSelectComponent) actionSelects!: QueryList<ActionSelectComponent>;
+  @ViewChildren(CategorySelectComponent) categorySelects!: QueryList<CategorySelectComponent>;
   @ViewChildren('myInput') inputs!: QueryList<ElementRef>;
 
   constructor() {
@@ -74,21 +74,21 @@ export class TransactionTableComponent {
   }
 
   private processTransactions(): OutputRow[] {
-    const actionSelections: string[] = this.actionSelects.map(x => x.selectedValue);
+    const categorySelections: string[] = this.categorySelects.map(x => x.selectedValue);
     const columnSelections: string[] = this.headerSelects.map(x => x.selectedValue);
     const columnCount = this.columnCount;
     const inputs = this.inputs.toArray();
     const rows: OutputRow[] = [];
-    for (let i = 0; i < actionSelections.length; i++) {
-      const actionSelection = actionSelections[i];
+    for (let i = 0; i < categorySelections.length; i++) {
+      const categorySelection = categorySelections[i];
       const row = this.processSingleTransaction(
-        actionSelection,
+        categorySelection,
         columnSelections,
         inputs.slice(i * columnCount, i * columnCount + columnCount),
       );
       if (row !== undefined) {
         rows.push({
-          actionSelection,
+          categorySelection,
           values: row,
         });
       }
@@ -98,18 +98,18 @@ export class TransactionTableComponent {
 
   private sortByCategory(rows: OutputRow[]) {
     rows.sort((a, b) => {
-      if (a.actionSelection > b.actionSelection) return 1;
-      if (a.actionSelection < b.actionSelection) return -1;
+      if (a.categorySelection > b.categorySelection) return 1;
+      if (a.categorySelection < b.categorySelection) return -1;
       return 0;
     });
   }
 
   private processSingleTransaction(
-    actionSelection: string,
+    categorySelection: string,
     columnSelections: string[],
     inputs: ElementRef[],
   ): string[] | undefined {
-    if (actionSelection !== 'Ignore') {
+    if (categorySelection !== 'Ignore') {
       const row: string[] = [];
       for (let i = 0; i < columnSelections.length; i++) {
         const columnSelection = columnSelections[i];
@@ -119,7 +119,7 @@ export class TransactionTableComponent {
 
         const columnValue = inputs[i].nativeElement.value;
         if (columnSelection === 'Amount') {
-          this.addAmount(columnValue, actionSelection);
+          this.addAmount(columnValue, categorySelection);
         }
         row.push(columnValue);
       }
@@ -135,39 +135,39 @@ export class TransactionTableComponent {
     };
   }
 
-  private addAmount(columnValue: string, actionSelection: string) {
+  private addAmount(columnValue: string, categorySelection: string) {
     const calculations = this.calculations;
 
     const amount = new Decimal(columnValue);
     calculations.total = calculations.total.plus(amount);
 
     const categories = calculations.categories;
-    if (categories[actionSelection] === undefined) {
-      categories[actionSelection] = new Decimal(0);
+    if (categories[categorySelection] === undefined) {
+      categories[categorySelection] = new Decimal(0);
     }
-    categories[actionSelection] = categories[actionSelection].plus(amount);
+    categories[categorySelection] = categories[categorySelection].plus(amount);
   }
 
   private stringifyTransactions(rows: OutputRow[]): string[] {
     const outputColumnCount: number = this.headerSelects.filter(x => x.selectedValue !== 'Ignore').length;
     const output: string[] = [];
-    let currentActionSelection;
+    let currentCategorySelection;
     for (let i = 0; i < rows.length; i++) {
       const row = rows[i];
-      if (currentActionSelection != row.actionSelection) {
-        // Print current actionSelection
-        if (currentActionSelection !== undefined) {
-          output.push(this.stringifySingleAmount(currentActionSelection, outputColumnCount));
+      if (currentCategorySelection != row.categorySelection) {
+        // Print current categorySelection
+        if (currentCategorySelection !== undefined) {
+          output.push(this.stringifySingleAmount(currentCategorySelection, outputColumnCount));
         }
 
-        currentActionSelection = row.actionSelection;
+        currentCategorySelection = row.categorySelection;
       }
       output.push(row.values.join(','));
     }
 
-    // Print last current actionSelection
-    if (currentActionSelection !== undefined) {
-      output.push(this.stringifySingleAmount(currentActionSelection, outputColumnCount));
+    // Print last current categorySelection
+    if (currentCategorySelection !== undefined) {
+      output.push(this.stringifySingleAmount(currentCategorySelection, outputColumnCount));
     }
 
     return output;
@@ -183,11 +183,11 @@ export class TransactionTableComponent {
     return rows;
   }
 
-  private stringifySingleAmount(actionSelection: string, outputColumnCount: number): string {
+  private stringifySingleAmount(categorySelection: string, outputColumnCount: number): string {
     const output: string[] = new Array(Math.max(0, outputColumnCount - 2));
     const calculations = this.calculations;
-    output.push(actionSelection);
-    output.push(calculations.categories[actionSelection].toString());
+    output.push(categorySelection);
+    output.push(calculations.categories[categorySelection].toString());
     return output.join(',');
   }
 }
