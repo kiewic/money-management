@@ -174,13 +174,20 @@ export class TransactionTableComponent {
   }
 
   private stringifyCategoryAmounts(): string[] {
-    const calculations = this.calculations;
     const rows: string[] = [];
-    rows.push(`total,${calculations.total.toString()}`);
-    for (const category in calculations.categories) {
+    rows.push(`total,${this.calculations.total.toString()}`);
+    for (const tuple of this.sortCategoriesByAmount()) {
+      const [category] = tuple;
       rows.push(this.stringifySingleAmount(category, 2));
     }
     return rows;
+  }
+
+  private sortCategoriesByAmount(): [string, Decimal][] {
+    const categories = this.calculations.categories;
+    const tuples: [string, Decimal][] = Object.keys(categories).map<[string, Decimal]>(x => [x, categories[x]]);
+    tuples.sort((a, b) => a[1].sub(b[1]).toNumber());
+    return tuples;
   }
 
   private stringifySingleAmount(categorySelection: string, outputColumnCount: number): string {

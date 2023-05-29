@@ -20,5 +20,7 @@ Some commands used during development were:
 
 ## TODO
 
-1. Validate the first row (headers how) contains only string values
+1. Validate the first row (headers row) contains only string values
 3. Hide *Ignore* columns
+6. Sort rows by amount
+7. Block (make read-only) amount column
