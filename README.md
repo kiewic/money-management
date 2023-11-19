@@ -18,6 +18,14 @@ Some commands used during development were:
 
     ng generate component header-select
 
+## Deploy
+
+Since GitHub pages are deployed from *main* branch, there is no need to use any other tool, just `ng build`:
+
+```
+ng build --configuration production --base-href "/money-management/"
+```
+
 ## TODO
 
 1. Validate the first row (headers row) contains only string values
