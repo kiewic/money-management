@@ -1,7 +1,5 @@
 # Money Management Angular App
 
-This project was generated with [Angular CLI](https://angular.io/cli) version 15.2.1.
-
 ## Build and development server
 
 Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
