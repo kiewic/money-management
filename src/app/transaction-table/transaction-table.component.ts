@@ -4,6 +4,7 @@ import { HeaderSelectComponent } from '../header-select/header-select.component'
 import Decimal from '../../assets/decimal';
 
 interface OutputRow {
+  amount: Decimal;
   categorySelection: string;
   values: string[];
 };
@@ -65,10 +66,10 @@ export class TransactionTableComponent {
   public getOutput(): string {
     this.calculations = this.initializeCalculations();
     const rows = this.processTransactions();
-    this.sortByCategory(rows);
 
     const output: string[] = [];
     output.push(...this.stringifyCategoryAmounts());
+    output.push('');
     output.push(...this.stringifyTransactions(rows));
     return output.join('\n');
   }
@@ -87,20 +88,15 @@ export class TransactionTableComponent {
         inputs.slice(i * columnCount, i * columnCount + columnCount),
       );
       if (row !== undefined) {
-        rows.push({
-          categorySelection,
-          values: row,
-        });
+        rows.push(row);
       }
     }
     return rows;
   }
 
-  private sortByCategory(rows: OutputRow[]) {
+  private sortByAmount(rows: OutputRow[]) {
     rows.sort((a, b) => {
-      if (a.categorySelection > b.categorySelection) return 1;
-      if (a.categorySelection < b.categorySelection) return -1;
-      return 0;
+      return a.amount.comparedTo(b.amount);
     });
   }
 
@@ -108,9 +104,10 @@ export class TransactionTableComponent {
     categorySelection: string,
     columnSelections: string[],
     inputs: ElementRef[],
-  ): string[] | undefined {
+  ): OutputRow | undefined {
     if (categorySelection !== 'Ignore') {
-      const row: string[] = [];
+      const values: string[] = [];
+      let amount: Decimal = new Decimal(0);
       for (let i = 0; i < columnSelections.length; i++) {
         const columnSelection = columnSelections[i];
         if (columnSelection === 'Ignore') {
@@ -120,10 +117,15 @@ export class TransactionTableComponent {
         const columnValue = inputs[i].nativeElement.value;
         if (columnSelection === 'Amount') {
           this.addAmount(columnValue, categorySelection);
+          amount = new Decimal(columnValue);
         }
-        row.push(columnValue);
+        values.push(columnValue);
       }
-      return row;
+      return {
+        amount,
+        categorySelection,
+        values,
+      };
     }
     return;
   }
@@ -151,22 +153,15 @@ export class TransactionTableComponent {
   private stringifyTransactions(rows: OutputRow[]): string[] {
     const outputColumnCount: number = this.headerSelects.filter(x => x.selectedValue !== 'Ignore').length;
     const output: string[] = [];
-    let currentCategorySelection;
-    for (let i = 0; i < rows.length; i++) {
-      const row = rows[i];
-      if (currentCategorySelection != row.categorySelection) {
-        // Print current categorySelection
-        if (currentCategorySelection !== undefined) {
-          output.push(this.stringifySingleAmount(currentCategorySelection, outputColumnCount));
-        }
 
-        currentCategorySelection = row.categorySelection;
+    const uniqueCategories = rows.map(x => x.categorySelection).filter((value, index, self) => self.indexOf(value) === index);
+    for (const currentCategorySelection of uniqueCategories) {
+      const categoryRows = rows.filter(x => x.categorySelection === currentCategorySelection);
+      this.sortByAmount(categoryRows);
+      for (const row of categoryRows) {
+          output.push(row.values.join('\t'));
       }
-      output.push(row.values.join(','));
-    }
-
-    // Print last current categorySelection
-    if (currentCategorySelection !== undefined) {
+      // Print current categorySelection
       output.push(this.stringifySingleAmount(currentCategorySelection, outputColumnCount));
     }
 
@@ -175,7 +170,7 @@ export class TransactionTableComponent {
 
   private stringifyCategoryAmounts(): string[] {
     const rows: string[] = [];
-    rows.push(`total,${this.calculations.total.toString()}`);
+    rows.push(`total\t${this.calculations.total.toString()}`);
     for (const tuple of this.sortCategoriesByAmount()) {
       const [category] = tuple;
       rows.push(this.stringifySingleAmount(category, 2));
@@ -190,11 +185,12 @@ export class TransactionTableComponent {
     return tuples;
   }
 
+  /** Empty string, empty string, ..., category selection, category total */
   private stringifySingleAmount(categorySelection: string, outputColumnCount: number): string {
     const output: string[] = new Array(Math.max(0, outputColumnCount - 2));
     const calculations = this.calculations;
     output.push(categorySelection);
     output.push(calculations.categories[categorySelection].toString());
-    return output.join(',');
+    return output.join('\t');
   }
 }
